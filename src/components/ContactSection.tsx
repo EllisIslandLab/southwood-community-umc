@@ -88,7 +88,7 @@ export function ContactSection({ resendConfigured }: { resendConfigured: boolean
                 type="text"
                 required
                 maxLength={120}
-                className="mt-1 w-full rounded-lg border border-primary-light px-4 py-2.5 focus:border-primary focus:outline-none"
+                className="mt-1 w-full rounded-lg border border-primary-light bg-gray-100 px-4 py-2.5 text-ink focus:border-primary focus:bg-white focus:outline-none"
               />
             </div>
             <div>
@@ -101,7 +101,7 @@ export function ContactSection({ resendConfigured }: { resendConfigured: boolean
                 type="email"
                 required
                 maxLength={200}
-                className="mt-1 w-full rounded-lg border border-primary-light px-4 py-2.5 focus:border-primary focus:outline-none"
+                className="mt-1 w-full rounded-lg border border-primary-light bg-gray-100 px-4 py-2.5 text-ink focus:border-primary focus:bg-white focus:outline-none"
               />
             </div>
             <div>
@@ -114,7 +114,7 @@ export function ContactSection({ resendConfigured }: { resendConfigured: boolean
                 required
                 rows={5}
                 maxLength={2000}
-                className="mt-1 w-full rounded-lg border border-primary-light px-4 py-2.5 focus:border-primary focus:outline-none"
+                className="mt-1 w-full rounded-lg border border-primary-light bg-gray-100 px-4 py-2.5 text-ink focus:border-primary focus:bg-white focus:outline-none"
               />
             </div>
 
