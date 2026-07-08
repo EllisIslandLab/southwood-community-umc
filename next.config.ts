@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 
+const isDev = process.env.NODE_ENV === "development";
+
 const csp = [
   "default-src 'self'",
   // Next.js App Router hydrates via inline <script> tags (streamed RSC
@@ -10,7 +12,11 @@ const csp = [
   // use a nonce (see node_modules/next/dist/docs/.../content-security-policy.md)
   // — the nonce alternative requires dynamic rendering on every page,
   // which would break the /events ISR caching this site relies on.
-  "script-src 'self' 'unsafe-inline'",
+  // 'unsafe-eval' is dev-only: React uses eval() in development to
+  // reconstruct server-side error stacks in the browser. Neither React
+  // nor Next.js use eval() in production, so it's left out of the
+  // production policy.
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data:",
   "font-src 'self'",
