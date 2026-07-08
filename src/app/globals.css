@@ -47,20 +47,31 @@ h4 {
   font-family: var(--font-serif), ui-serif, Georgia, serif;
 }
 
-/* Gentle scroll fade-in, see components/FadeIn.tsx */
-.fade-in-up {
+/*
+ * Gentle scroll fade-in, see components/FadeIn.tsx.
+ *
+ * Progressive enhancement, on purpose: content is visible by default.
+ * JS only OPTS elements INTO the pre-hidden state (via .js-ready) once it
+ * has actually mounted, then reveals them on scroll (.is-visible). If JS
+ * fails to hydrate for any reason — CSP misconfiguration, a slow/broken
+ * bundle, an ad blocker — content simply stays visible with no animation,
+ * instead of getting stuck at opacity:0 forever. That exact failure mode
+ * (a strict script-src CSP blocking Next.js's hydration scripts) is what
+ * caused entire sections to render blank in production once already.
+ */
+.fade-in-up.js-ready {
   opacity: 0;
   transform: translateY(16px);
   transition: opacity 0.6s ease-out, transform 0.6s ease-out;
 }
 
-.fade-in-up.is-visible {
+.fade-in-up.js-ready.is-visible {
   opacity: 1;
   transform: translateY(0);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .fade-in-up {
+  .fade-in-up.js-ready {
     opacity: 1;
     transform: none;
     transition: none;

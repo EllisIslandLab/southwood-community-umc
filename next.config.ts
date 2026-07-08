@@ -2,7 +2,15 @@ import type { NextConfig } from "next";
 
 const csp = [
   "default-src 'self'",
-  "script-src 'self'",
+  // Next.js App Router hydrates via inline <script> tags (streamed RSC
+  // payloads) with no src attribute — 'self' alone blocks every one of
+  // them and silently breaks all client-side JS (observed: FadeIn-wrapped
+  // sections stuck at opacity:0 forever since hydration never completes).
+  // This is Next.js's own documented approach for CSP setups that don't
+  // use a nonce (see node_modules/next/dist/docs/.../content-security-policy.md)
+  // — the nonce alternative requires dynamic rendering on every page,
+  // which would break the /events ISR caching this site relies on.
+  "script-src 'self' 'unsafe-inline'",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data:",
   "font-src 'self'",
