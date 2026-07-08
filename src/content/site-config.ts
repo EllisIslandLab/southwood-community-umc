@@ -72,7 +72,7 @@ export const siteConfig = {
   ),
 
   // {{CONTACT_EMAIL}}
-  contactEmail: pending("hello@southwoodumc.org", "hello@southwoodumc.org"),
+  contactEmail: ready("wlaiglesia@gmail.com", "wlaiglesia@gmail.com"),
 
   // {{CONTACT_PHONE}}
   contactPhone: pending("(434) 555-0100", "(434) 555-0100"),

@@ -63,7 +63,7 @@ See `.env.example` for the full list with explanations. Summary:
 |---|---|---|
 | `NEXT_PUBLIC_SITE_URL` | Recommended | Metadata/sitemap fall back to `http://localhost:3000` |
 | `AIRTABLE_API_KEY` / `AIRTABLE_BASE_ID` | Optional | `/events` shows just the two weekly studies from `site-config.ts` |
-| `RESEND_API_KEY` / `RESEND_FROM_EMAIL` | Optional | Contact section shows a plain mailto/tel link instead of a form |
+| `RESEND_API_KEY` / `RESEND_FROM_EMAIL` / `RESEND_TO_EMAIL` | Optional (all three together) | Contact section shows a plain mailto/tel link instead of a form |
 
 ### Setting up Airtable (for the `/events` page)
 
@@ -99,13 +99,20 @@ Airtable show up on the live site within an hour with no redeploy.
 
 ### Setting up Resend (for the contact form)
 
-1. Sign up free at resend.com and verify a sending domain (or use their
-   test domain while developing).
+1. Sign up free at resend.com.
 2. Create an API key and set `RESEND_API_KEY`.
-3. Set `RESEND_FROM_EMAIL` to a verified sending address.
+3. Set `RESEND_FROM_EMAIL` — while developing, `onboarding@resend.dev` works
+   as a shared sandbox sender, but Resend will only let it deliver to the
+   email address on your own Resend account. Verify a real domain in Resend
+   before launch to send from (and to) any address.
+4. Set `RESEND_TO_EMAIL` — the inbox that actually receives contact-form
+   submissions. This is intentionally separate from the ministry's
+   public-facing email in `site-config.ts`; they don't have to match (e.g.
+   submissions can land in an internal inbox while the site displays a
+   different public address once real content arrives).
 
-Until both are set, the Contact section just shows the ministry's email and
-phone as plain links — no broken form, no error.
+Until all three are set, the Contact section just shows the ministry's
+email and phone as plain links — no broken form, no error.
 
 ## Security
 

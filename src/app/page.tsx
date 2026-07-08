@@ -6,7 +6,9 @@ import { ContactSection } from "@/components/ContactSection";
 
 export default function Home() {
   const resendConfigured = Boolean(
-    process.env.RESEND_API_KEY && process.env.RESEND_FROM_EMAIL
+    process.env.RESEND_API_KEY &&
+      process.env.RESEND_FROM_EMAIL &&
+      process.env.RESEND_TO_EMAIL
   );
 
   return (

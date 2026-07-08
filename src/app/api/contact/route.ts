@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { Resend } from "resend";
 import { isRateLimited } from "@/lib/rateLimit";
-import { siteConfig } from "@/content/site-config";
 
 const contactSchema = z.object({
   name: z.string().trim().min(1, "Name is required").max(120),
@@ -25,8 +24,9 @@ function escapeHtml(value: string): string {
 export async function POST(request: NextRequest) {
   const resendApiKey = process.env.RESEND_API_KEY;
   const resendFrom = process.env.RESEND_FROM_EMAIL;
+  const resendTo = process.env.RESEND_TO_EMAIL;
 
-  if (!resendApiKey || !resendFrom) {
+  if (!resendApiKey || !resendFrom || !resendTo) {
     return NextResponse.json(
       { error: "Email is not configured for this site yet." },
       { status: 503 }
@@ -63,13 +63,10 @@ export async function POST(request: NextRequest) {
   }
 
   const resend = new Resend(resendApiKey);
-  const contactEmail = siteConfig.contactEmail.pending
-    ? resendFrom
-    : siteConfig.contactEmail.en;
 
   const { error } = await resend.emails.send({
     from: resendFrom,
-    to: contactEmail,
+    to: resendTo,
     replyTo: email,
     subject: `New message from ${escapeHtml(name)} via the website`,
     html: `

@@ -13,6 +13,12 @@ export function Footer() {
               {siteConfig.ministryName}
             </p>
             <p className="mt-1">{siteConfig.location}</p>
+            <a
+              href={`mailto:${siteConfig.contactEmail.en}`}
+              className="mt-1 block hover:text-primary"
+            >
+              {siteConfig.contactEmail.en}
+            </a>
           </div>
           <div>
             <p className="font-semibold text-ink">
