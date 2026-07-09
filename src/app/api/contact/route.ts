@@ -12,6 +12,52 @@ const contactSchema = z.object({
   company: z.string().max(200).optional().default(""),
 });
 
+async function saveToAirtable(fields: {
+  name: string;
+  email: string;
+  message: string;
+}): Promise<boolean> {
+  const apiKey = process.env.AIRTABLE_API_KEY;
+  const baseId = process.env.AIRTABLE_BASE_ID;
+  const tableId = process.env.AIRTABLE_TABLE_ID;
+
+  if (!apiKey || !baseId || !tableId) {
+    console.warn("Airtable is not configured; skipping contact-form archive.");
+    return false;
+  }
+
+  const response = await fetch(
+    `https://api.airtable.com/v0/${baseId}/${tableId}`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        fields: {
+          Name: fields.name,
+          Email: fields.email,
+          Message: fields.message,
+          "Submitted At": new Date().toISOString(),
+          Status: "New",
+        },
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    console.error(
+      `Airtable rejected contact submission: ${response.status} ${await response
+        .text()
+        .catch(() => "")}`
+    );
+    return false;
+  }
+
+  return true;
+}
+
 function escapeHtml(value: string): string {
   return value
     .replace(/&/g, "&amp;")
@@ -64,6 +110,15 @@ export async function POST(request: NextRequest) {
 
   const resend = new Resend(resendApiKey);
 
+  // Archive to Airtable and send the email in parallel. Airtable failure is
+  // logged but never blocks the visitor — email is the delivery guarantee.
+  const airtablePromise = saveToAirtable({ name, email, message }).catch(
+    (err) => {
+      console.error("Airtable archive failed:", err);
+      return false;
+    }
+  );
+
   const { error } = await resend.emails.send({
     from: resendFrom,
     to: resendTo,
@@ -77,11 +132,18 @@ export async function POST(request: NextRequest) {
     `,
   });
 
-  if (error) {
+  const savedToAirtable = await airtablePromise;
+
+  if (error && !savedToAirtable) {
     return NextResponse.json(
       { error: "Could not send your message. Please try again shortly." },
       { status: 502 }
     );
+  }
+
+  if (error) {
+    // The message is safe in Airtable even though the email failed.
+    console.error("Resend send failed (submission archived in Airtable):", error);
   }
 
   return NextResponse.json({ ok: true });
