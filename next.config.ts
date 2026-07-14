@@ -26,11 +26,15 @@ const csp = [
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
+  // Allows this site to be embedded only by itself and the Mission
+  // Control portal (for the live preview/logs panel). Replaces the old
+  // X-Frame-Options header, which can only allow one origin and would
+  // block the portal preview entirely.
+  "frame-ancestors 'self' https://www.weblaunchacademy.com https://*.weblaunchacademy.com",
 ].join("; ");
 
 const securityHeaders = [
   { key: "Content-Security-Policy", value: csp },
-  { key: "X-Frame-Options", value: "SAMEORIGIN" },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
 ];
