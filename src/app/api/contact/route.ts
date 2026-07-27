@@ -7,6 +7,7 @@ const contactSchema = z.object({
   name: z.string().trim().min(1, "Name is required").max(120),
   email: z.string().trim().email("A valid email is required").max(200),
   message: z.string().trim().min(1, "Message is required").max(2000),
+  isMember: z.boolean().optional().default(false),
   // Honeypot: real visitors never see or fill this field. If it has a
   // value, silently accept the request without sending anything.
   company: z.string().max(200).optional().default(""),
@@ -16,6 +17,7 @@ async function saveToAirtable(fields: {
   name: string;
   email: string;
   message: string;
+  isMember: boolean;
 }): Promise<boolean> {
   const apiKey = process.env.AIRTABLE_API_KEY;
   const baseId = process.env.AIRTABLE_BASE_ID;
@@ -39,6 +41,7 @@ async function saveToAirtable(fields: {
           Name: fields.name,
           Email: fields.email,
           Message: fields.message,
+          Member: fields.isMember,
           "Submitted At": new Date().toISOString(),
           Status: "New",
         },
@@ -56,6 +59,56 @@ async function saveToAirtable(fields: {
   }
 
   return true;
+}
+
+/**
+ * Records the person in the "Members" or "Visitors" people table, keyed on
+ * Email so repeat submissions update the existing row instead of duplicating
+ * it. A repeat submission does bump First Contact to the latest date.
+ */
+async function savePersonToAirtable(fields: {
+  name: string;
+  email: string;
+  isMember: boolean;
+}): Promise<void> {
+  const apiKey = process.env.AIRTABLE_API_KEY;
+  const baseId = process.env.AIRTABLE_BASE_ID;
+
+  if (!apiKey || !baseId) {
+    return;
+  }
+
+  const table = fields.isMember ? "Members" : "Visitors";
+  const response = await fetch(
+    `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(table)}`,
+    {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        performUpsert: { fieldsToMergeOn: ["Email"] },
+        records: [
+          {
+            fields: {
+              Name: fields.name,
+              Email: fields.email,
+              "First Contact": new Date().toISOString(),
+            },
+          },
+        ],
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    console.error(
+      `Airtable rejected ${table} upsert: ${response.status} ${await response
+        .text()
+        .catch(() => "")}`
+    );
+  }
 }
 
 function escapeHtml(value: string): string {
@@ -200,7 +253,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { name, email, message, company } = parsed.data;
+  const { name, email, message, isMember, company } = parsed.data;
 
   // Honeypot tripped — pretend success, send nothing.
   if (company) {
@@ -209,13 +262,19 @@ export async function POST(request: NextRequest) {
 
   const resend = new Resend(resendApiKey);
 
-  // Archive to Airtable, send church notification, and send visitor
-  // confirmation — all in parallel. Airtable failure is logged but never
-  // blocks the visitor.
-  const airtablePromise = saveToAirtable({ name, email, message }).catch(
+  // Archive to Airtable, record the person in the Members/Visitors table,
+  // send church notification, and send visitor confirmation — all in
+  // parallel. Airtable failure is logged but never blocks the visitor.
+  const airtablePromise = saveToAirtable({ name, email, message, isMember }).catch(
     (err) => {
       console.error("Airtable archive failed:", err);
       return false;
+    }
+  );
+
+  const personPromise = savePersonToAirtable({ name, email, isMember }).catch(
+    (err) => {
+      console.error("Airtable people-table upsert failed:", err);
     }
   );
 
@@ -229,21 +288,29 @@ export async function POST(request: NextRequest) {
       html: `
         <p><strong>Name:</strong> ${escapeHtml(name)}</p>
         <p><strong>Email:</strong> ${escapeHtml(email)}</p>
+        <p><strong>Member:</strong> ${isMember ? "Yes" : "No"}</p>
         <p><strong>Message:</strong></p>
         <p>${escapeHtml(message).replace(/\n/g, "<br />")}</p>
       `,
     }),
 
-    // Confirmation to the visitor
-    resend.emails.send({
-      from: resendFrom,
-      to: email,
-      subject: "Message Received / Mensaje Recibido — Southwood Community Church",
-      html: buildConfirmationHtml(name),
-    }),
+    // Confirmation to the visitor. The idempotency key dedupes on the
+    // recipient address for 24h — a retried request won't send twice, and
+    // the form can't be abused to flood a third party's inbox.
+    resend.emails.send(
+      {
+        from: resendFrom,
+        to: email,
+        replyTo: resendTo,
+        subject: "Message Received / Mensaje Recibido — Southwood Community Church",
+        html: buildConfirmationHtml(name),
+      },
+      { idempotencyKey: `contact-thank-you/${email.toLowerCase()}` }
+    ),
   ]);
 
   const savedToAirtable = await airtablePromise;
+  await personPromise;
 
   if (notifyError) {
     console.error("Resend notification failed:", notifyError);

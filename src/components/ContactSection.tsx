@@ -27,6 +27,7 @@ export function ContactSection({ resendConfigured }: { resendConfigured: boolean
           name: data.get("name"),
           email: data.get("email"),
           message: data.get("message"),
+          isMember: data.get("isMember") === "on",
           company: data.get("company"),
         }),
       });
@@ -116,6 +117,18 @@ export function ContactSection({ resendConfigured }: { resendConfigured: boolean
                 maxLength={2000}
                 className="mt-1 w-full rounded-lg border border-primary-light bg-gray-100 px-4 py-2.5 text-ink focus:border-primary focus:bg-white focus:outline-none"
               />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <input
+                id="isMember"
+                name="isMember"
+                type="checkbox"
+                className="h-4 w-4 rounded border-primary-light accent-primary"
+              />
+              <label htmlFor="isMember" className="text-sm font-medium text-ink">
+                I&rsquo;m a member <span lang="es">/ Soy miembro</span>
+              </label>
             </div>
 
             <button

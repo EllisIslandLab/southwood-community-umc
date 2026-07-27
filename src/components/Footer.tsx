@@ -19,6 +19,12 @@ export function Footer() {
             >
               {siteConfig.contactEmail.en}
             </a>
+            <a
+              href={`tel:${siteConfig.contactPhone.en.replace(/[^\d+]/g, "")}`}
+              className="mt-1 block hover:text-primary"
+            >
+              {siteConfig.contactPhone.en}
+            </a>
           </div>
           <div>
             <p className="font-semibold text-ink">

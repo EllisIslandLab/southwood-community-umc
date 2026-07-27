@@ -75,7 +75,7 @@ export const siteConfig = {
   contactEmail: ready("wlaiglesia@gmail.com", "wlaiglesia@gmail.com"),
 
   // {{CONTACT_PHONE}}
-  contactPhone: pending("(434) 555-0100", "(434) 555-0100"),
+  contactPhone: ready("(571) 221-1068", "(571) 221-1068"),
 
   // {{SERVICE_TIMES}} — Sunday service info, if/when it exists.
   // Intentionally NOT wrapped in pending(): if this is empty, components
