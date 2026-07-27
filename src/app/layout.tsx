@@ -83,6 +83,8 @@ export default function RootLayout({
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
+        {/* Web Launch Academy analytics */}
+        <script defer src="https://weblaunchacademy.com/beacon.js" data-site="c0181421-916e-45ee-8d43-59b9dd34b5f6"></script>
       </body>
     </html>
   );
