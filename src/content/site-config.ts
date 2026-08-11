@@ -1,5 +1,5 @@
 /**
- * SINGLE SOURCE OF CONTENT for Southwood Community Iglesia UMC.
+ * SINGLE SOURCE OF CONTENT for Southwood Village Mission UMC.
  *
  * Every piece of copy the pastor still needs to send lives here, wrapped in
  * `pending(...)`. In development, fields created with `pending()` render a
@@ -38,8 +38,8 @@ export type WeeklyGathering = {
 };
 
 export const siteConfig = {
-  ministryName: "Southwood Community Iglesia UMC",
-  shortName: "Southwood Community Iglesia UMC",
+  ministryName: "Southwood Village Mission UMC",
+  shortName: "Southwood Village Mission UMC",
   location: "Charlottesville, VA",
 
   tagline: {

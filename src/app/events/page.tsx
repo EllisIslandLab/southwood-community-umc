@@ -4,7 +4,7 @@ import { getEvents, type SiteEvent } from "@/lib/airtable";
 export const metadata: Metadata = {
   title: "Events",
   description:
-    "Weekly Bible studies and upcoming events at Southwood Community Iglesia UMC.",
+    "Weekly Bible studies and upcoming events at Southwood Village Mission UMC.",
 };
 
 function isUpcoming(event: SiteEvent): boolean {

@@ -124,11 +124,11 @@ function buildConfirmationHtml(name: string): string {
   // Build greeting — drop the comma entirely when no name is provided
   const safeName = name ? escapeHtml(name) : "";
   const greetingEn = safeName
-    ? `Thank you for reaching out to Southwood Community Church, ${safeName}.`
-    : "Thank you for reaching out to Southwood Community Church.";
+    ? `Thank you for reaching out to Southwood Village Mission UMC, ${safeName}.`
+    : "Thank you for reaching out to Southwood Village Mission UMC.";
   const greetingEs = safeName
-    ? `Gracias por comunicarse con Southwood Community Church, ${safeName}.`
-    : "Gracias por comunicarse con Southwood Community Church.";
+    ? `Gracias por comunicarse con Southwood Village Mission UMC, ${safeName}.`
+    : "Gracias por comunicarse con Southwood Village Mission UMC.";
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -150,7 +150,7 @@ function buildConfirmationHtml(name: string): string {
             <td style="background-color:#1e5aa8;padding:36px 40px 28px;text-align:center;">
               <p style="margin:0 0 6px;font-size:11px;letter-spacing:3px;color:#b8d0ef;
                          text-transform:uppercase;font-family:Arial,sans-serif;">
-                Southwood Community Church
+                Southwood Village Mission
               </p>
               <p style="margin:0;font-size:13px;letter-spacing:1px;color:#b8d0ef;
                          text-transform:uppercase;font-family:Arial,sans-serif;">
@@ -206,7 +206,7 @@ function buildConfirmationHtml(name: string): string {
                         padding:20px 40px;text-align:center;">
               <p style="margin:0;font-size:13px;color:#4b5a6b;font-family:Arial,sans-serif;
                           line-height:1.5;">
-                Southwood Community Church &mdash; United Methodist
+                Southwood Village Mission &mdash; United Methodist
               </p>
             </td>
           </tr>
@@ -302,7 +302,7 @@ export async function POST(request: NextRequest) {
         from: resendFrom,
         to: email,
         replyTo: resendTo,
-        subject: "Message Received / Mensaje Recibido — Southwood Community Church",
+        subject: "Message Received / Mensaje Recibido — Southwood Village Mission UMC",
         html: buildConfirmationHtml(name),
       },
       { idempotencyKey: `contact-thank-you/${email.toLowerCase()}` }

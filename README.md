@@ -1,7 +1,7 @@
-# Southwood Community Iglesia UMC
+# Southwood Village Mission UMC
 
-A small, bilingual (English/Spanish) ministry website for Southwood Community
-Iglesia UMC, a new United Methodist ministry plant in the Southwood
+A small, bilingual (English/Spanish) ministry website for Southwood Village
+Mission UMC, a new United Methodist ministry plant in the Southwood
 community of Charlottesville, VA. Built by Web Launch Academy — client owns
 the code, hosting, and domain outright ("Build Once, Own Forever").
 

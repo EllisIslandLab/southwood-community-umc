@@ -108,7 +108,7 @@ export function LocationSection() {
 
               <div className="mt-4 aspect-video overflow-hidden rounded-lg border border-primary-light">
                 <iframe
-                  title="Map to Southwood Community Iglesia UMC"
+                  title="Map to Southwood Village Mission UMC"
                   src={mapsEmbedSrc}
                   className="h-full w-full"
                   loading="lazy"
