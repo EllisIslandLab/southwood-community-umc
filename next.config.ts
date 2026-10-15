@@ -16,7 +16,7 @@ const csp = [
   // reconstruct server-side error stacks in the browser. Neither React
   // nor Next.js use eval() in production, so it's left out of the
   // production policy.
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
+  `script-src https://weblaunchacademy.com 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data:",
   "font-src 'self'",
